@@ -1,50 +1,45 @@
 import torch
 import time
-import os
-import matplotlib.pyplot as plt
+# import os
+# import matplotlib.pyplot as plt
 
-import pruner
-import utils
-
-
-def plot_training_curve(training_result, save_dir, prefix):
-    # plot training curve
-    for name, result in training_result.items():
-        plt.plot(result, label=f'{name}_acc')
-    plt.legend()
-    plt.savefig(os.path.join(save_dir, prefix + '_train.png'))
-    plt.close()
+# import utils
 
 
-def save_unlearn_checkpoint(model, evaluation_result, args):
-    state = {
-        'state_dict': model.state_dict(),
-        'evaluation_result': evaluation_result
-    }
-    utils.save_checkpoint(state, False, args.save_dir, args.unlearn)
-    utils.save_checkpoint(evaluation_result, False, args.save_dir,
-                          args.unlearn, filename="eval_result.pth.tar")
+# def plot_training_curve(training_result, save_dir, prefix):
+#     # plot training curve
+#     for name, result in training_result.items():
+#         plt.plot(result, label=f'{name}_acc')
+#     plt.legend()
+#     plt.savefig(os.path.join(save_dir, prefix + '_train.png'))
+#     plt.close()
 
 
-def load_unlearn_checkpoint(model, device, args):
-    checkpoint = utils.load_checkpoint(device, args.save_dir, args.unlearn)
-    if checkpoint is None or checkpoint.get('state_dict') is None:
-        return None
+# def save_unlearn_checkpoint(model, evaluation_result, args):
+#     state = {
+#         'state_dict': model.state_dict(),
+#         'evaluation_result': evaluation_result
+#     }
+#     utils.save_checkpoint(state, False, args.save_dir, args.unlearn)
+#     utils.save_checkpoint(evaluation_result, False, args.save_dir,
+#                           args.unlearn, filename="eval_result.pth.tar")
 
-    current_mask = pruner.extract_mask(checkpoint['state_dict'])
-    pruner.prune_model_custom(model, current_mask)
-    pruner.check_sparsity(model)
 
-    model.load_state_dict(checkpoint['state_dict'], strict=False)
+# def load_unlearn_checkpoint(model, device, args):
+#     checkpoint = utils.load_checkpoint(device, args.save_dir, args.unlearn)
+#     if checkpoint is None or checkpoint.get('state_dict') is None:
+#         return None
 
-    # adding an extra forward process to enable the masks
-    x_rand = torch.rand(1, 3, args.input_size, args.input_size).cuda()
-    model.eval()
-    with torch.no_grad():
-        model(x_rand)
+#     model.load_state_dict(checkpoint['state_dict'])
 
-    evaluation_result = checkpoint.get('evaluation_result')
-    return model, evaluation_result
+#     # adding an extra forward process to enable the masks
+#     x_rand = torch.rand(1, 3, args.input_size, args.input_size).cuda()
+#     model.eval()
+#     with torch.no_grad():
+#         model(x_rand)
+
+#     evaluation_result = checkpoint.get('evaluation_result')
+#     return model, evaluation_result
 
 
 def _iterative_unlearn_impl(unlearn_iter_func):
