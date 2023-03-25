@@ -20,11 +20,6 @@ def GA(data_loaders, model, criterion, optimizer, epoch, args):
 
     start = time.time()
     for i, (image, target) in enumerate(train_loader):
-
-        if epoch < args.warmup:
-            utils.warmup_lr(epoch, i+1, optimizer,
-                            one_epoch_step=len(train_loader), args=args)
-
         image = image.cuda()
         target = target.cuda()
 
@@ -68,11 +63,6 @@ def GA_l1(data_loaders, model, criterion, optimizer, epoch, args):
 
     start = time.time()
     for i, (image, target) in enumerate(train_loader):
-
-        if epoch < args.warmup:
-            utils.warmup_lr(epoch, i+1, optimizer,
-                            one_epoch_step=len(train_loader), args=args)
-
         image = image.cuda()
         target = target.cuda()
 

@@ -24,9 +24,6 @@ def RL(data_loaders, model, criterion, optimizer, epoch, args):
     start = time.time()
     loader_len = len(forget_loader) + len(retain_loader)
 
-    if epoch < args.warmup:
-        utils.warmup_lr(epoch, i+1, optimizer,
-                        one_epoch_step=loader_len, args=args)
 
     # for i, (image, target) in enumerate(forget_loader):
     #     image = image.cuda()

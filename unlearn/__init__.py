@@ -3,7 +3,7 @@ from .RL import RL
 from .FT import FT,FT_l1
 from .fisher import fisher,fisher_new
 from .retrain import retrain
-from .impl import load_unlearn_checkpoint, save_unlearn_checkpoint
+# from .impl import load_unlearn_checkpoint, save_unlearn_checkpoint
 from .Wfisher import Wfisher
 def raw(data_loaders, model, criterion, args):
     pass

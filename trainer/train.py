@@ -33,11 +33,6 @@ def train(train_loader, model, criterion, optimizer, epoch, args, l1=False):
 
     start = time.time()
     for i, (input, target) in enumerate(train_loader):
-
-        if epoch < args.warmup:
-            utils.warmup_lr(epoch, i+1, optimizer,
-                            one_epoch_step=len(train_loader), args=args)
-
         input = input.cuda()
         target = target.cuda()
 
