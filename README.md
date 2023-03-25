@@ -10,7 +10,7 @@ conda install pytorch torchvision torchaudio pytorch-cuda=11.8 ignite nltk sciki
 ```bash
 # cuda = 11.8, install with pip
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install dgl -f https://data.dgl.ai/wheels/cu117/repo.html
+pip install dgl -f https://data.dgl.ai/wheels/cu118/repo.html
 pip install dglgo -f https://data.dgl.ai/wheels-test/repo.html
 pip install pytorch-ignite transformers scikit-learn nltk
 ```
