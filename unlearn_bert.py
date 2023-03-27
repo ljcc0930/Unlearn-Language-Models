@@ -85,7 +85,7 @@ def main():
     if unlearn_result is None or args.rerun:
         unlearn_func = unlearn.get_unlearn_method(unlearn_method)
         if unlearn_method != "retrain":
-            checkpoint = "checkpoint/bert-base-uncased_20ng/checkpoint.pth"  # hard coding
+            checkpoint = f"checkpoint/{bert_init}_{dataset}/checkpoint.pth"
             checkpoint_dict = th.load(checkpoint)
             model.bert_model.load_state_dict(checkpoint_dict['bert_model'])
             model.classifier.load_state_dict(checkpoint_dict['classifier'])
