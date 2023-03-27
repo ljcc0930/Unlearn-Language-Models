@@ -27,6 +27,10 @@ def save_unlearn_checkpoint(model, evaluation_result, args):
     },
     os.path.join(dir, "save.pkl")
     )
+    torch.save(
+    evaluation_result,
+    os.path.join(dir, "eval.pkl")
+    )
 
 
 def load_unlearn_checkpoint(model, args):
