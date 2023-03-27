@@ -21,27 +21,28 @@ def FT_iter(data_loaders, model, criterion, optimizer, epoch, args, with_l1=Fals
     model.train()
 
     start = time.time()
-    for i, (image, target) in enumerate(train_loader):
-        image = image.cuda()
-        target = target.cuda()
+    for i, (inp, mask, label) in enumerate(train_loader):
+        inp = inp.cuda()
+        mask = mask.cuda()
+        label = label.cuda()
 
+        optimizer.zero_grad()
         # compute output
-        output_clean = model(image)
-        loss = criterion(output_clean, target)
+        output_clean = model(inp, mask)
+        loss = criterion(output_clean, label)
         if with_l1:
             loss += args.alpha * l1_regularization(model)
 
-        optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
         output = output_clean.float()
         loss = loss.float()
         # measure accuracy and record loss
-        prec1 = utils.accuracy(output.data, target)[0]
+        prec1 = utils.accuracy(output.data, label)[0]
 
-        losses.update(loss.item(), image.size(0))
-        top1.update(prec1.item(), image.size(0))
+        losses.update(loss.item(), label.size(0))
+        top1.update(prec1.item(), label.size(0))
 
         if (i + 1) % args.print_freq == 0:
             end = time.time()

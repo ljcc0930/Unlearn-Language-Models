@@ -19,13 +19,14 @@ def GA(data_loaders, model, criterion, optimizer, epoch, args):
     model.train()
 
     start = time.time()
-    for i, (image, target) in enumerate(train_loader):
-        image = image.cuda()
-        target = target.cuda()
+    for i, (inp, mask, label) in enumerate(train_loader):
+        inp = inp.cuda()
+        mask = mask.cuda()
+        label = label.cuda()
 
         # compute output
-        output_clean = model(image)
-        loss = -criterion(output_clean, target)
+        output_clean = model(inp, mask)
+        loss = -criterion(output_clean, label)
 
         optimizer.zero_grad()
         loss.backward()
@@ -34,10 +35,10 @@ def GA(data_loaders, model, criterion, optimizer, epoch, args):
         output = output_clean.float()
         loss = loss.float()
         # measure accuracy and record loss
-        prec1 = utils.accuracy(output.data, target)[0]
+        prec1 = utils.accuracy(output.data, label)[0]
 
-        losses.update(loss.item(), image.size(0))
-        top1.update(prec1.item(), image.size(0))
+        losses.update(loss.item(), label.size(0))
+        top1.update(prec1.item(), label.size(0))
 
         if (i + 1) % args.print_freq == 0:
             end = time.time()
@@ -51,46 +52,46 @@ def GA(data_loaders, model, criterion, optimizer, epoch, args):
     print('train_accuracy {top1.avg:.3f}'.format(top1=top1))
 
     return top1.avg
-@iterative_unlearn
-def GA_l1(data_loaders, model, criterion, optimizer, epoch, args):
-    train_loader = data_loaders["forget"]
+# @iterative_unlearn
+# def GA_l1(data_loaders, model, criterion, optimizer, epoch, args):
+#     train_loader = data_loaders["forget"]
 
-    losses = utils.AverageMeter()
-    top1 = utils.AverageMeter()
+#     losses = utils.AverageMeter()
+#     top1 = utils.AverageMeter()
 
-    # switch to train mode
-    model.train()
+#     # switch to train mode
+#     model.train()
 
-    start = time.time()
-    for i, (image, target) in enumerate(train_loader):
-        image = image.cuda()
-        target = target.cuda()
+#     start = time.time()
+#     for i, (image, target) in enumerate(train_loader):
+#         image = image.cuda()
+#         target = target.cuda()
 
-        # compute output
-        output_clean = model(image)
-        loss = -criterion(output_clean, target)+args.alpha * l1_regularization(model)
+#         # compute output
+#         output_clean = model(image)
+#         loss = -criterion(output_clean, target)+args.alpha * l1_regularization(model)
 
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+#         optimizer.zero_grad()
+#         loss.backward()
+#         optimizer.step()
 
-        output = output_clean.float()
-        loss = loss.float()
-        # measure accuracy and record loss
-        prec1 = utils.accuracy(output.data, target)[0]
+#         output = output_clean.float()
+#         loss = loss.float()
+#         # measure accuracy and record loss
+#         prec1 = utils.accuracy(output.data, target)[0]
 
-        losses.update(loss.item(), image.size(0))
-        top1.update(prec1.item(), image.size(0))
+#         losses.update(loss.item(), image.size(0))
+#         top1.update(prec1.item(), image.size(0))
 
-        if (i + 1) % args.print_freq == 0:
-            end = time.time()
-            print('Epoch: [{0}][{1}/{2}]\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
-                  'Time {3:.2f}'.format(
-                      epoch, i, len(train_loader), end-start, loss=losses, top1=top1))
-            start = time.time()
+#         if (i + 1) % args.print_freq == 0:
+#             end = time.time()
+#             print('Epoch: [{0}][{1}/{2}]\t'
+#                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+#                   'Accuracy {top1.val:.3f} ({top1.avg:.3f})\t'
+#                   'Time {3:.2f}'.format(
+#                       epoch, i, len(train_loader), end-start, loss=losses, top1=top1))
+#             start = time.time()
 
-    print('train_accuracy {top1.avg:.3f}'.format(top1=top1))
+#     print('train_accuracy {top1.avg:.3f}'.format(top1=top1))
 
-    return top1.avg
+#     return top1.avg

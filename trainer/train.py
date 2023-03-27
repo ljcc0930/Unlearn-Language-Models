@@ -24,7 +24,6 @@ def get_optimizer_and_scheduler(model, args):
 
 
 def train(train_loader, model, criterion, optimizer, epoch, args, l1=False):
-
     losses = utils.AverageMeter()
     top1 = utils.AverageMeter()
 
@@ -32,14 +31,15 @@ def train(train_loader, model, criterion, optimizer, epoch, args, l1=False):
     model.train()
 
     start = time.time()
-    for i, (input, target) in enumerate(train_loader):
-        input = input.cuda()
-        target = target.cuda()
+    for i, (inp, mask, label) in enumerate(train_loader):
+        inp = inp.cuda()
+        mask = mask.cuda()
+        label = label.cuda()
 
         # compute output
-        output_clean = model(input)
+        output_clean = model(inp, mask)
 
-        loss = criterion(output_clean, target)
+        loss = criterion(output_clean, label)
         if l1:
             loss = loss + args.alpha * l1_regularization(model)
         optimizer.zero_grad()
@@ -49,10 +49,10 @@ def train(train_loader, model, criterion, optimizer, epoch, args, l1=False):
         output = output_clean.float()
         loss = loss.float()
         # measure accuracy and record loss
-        prec1 = utils.accuracy(output.data, target)[0]
+        prec1 = utils.accuracy(output.data, label)[0]
 
-        losses.update(loss.item(), input.size(0))
-        top1.update(prec1.item(), input.size(0))
+        losses.update(loss.item(), inp.size(0))
+        top1.update(prec1.item(), inp.size(0))
 
         if (i + 1) % args.print_freq == 0:
             end = time.time()

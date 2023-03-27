@@ -1,5 +1,6 @@
 checkpoint
 data
+unlearn_results
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

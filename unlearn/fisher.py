@@ -10,11 +10,12 @@ def fisher_information_martix(model, train_dl, device):
     for parameter in model.parameters():
         fisher_approximation.append(torch.zeros_like(parameter).to(device))
     total = 0
-    for i, (data, label) in enumerate(tqdm(train_dl)):
-        data = data.to(device)
-        label = label.to(device)
-        predictions = torch.log_softmax(model(data), dim=-1)
-        real_batch = data.shape[0]
+    for i, (inp, mask, label) in enumerate(train_dl):
+        inp = inp.cuda()
+        mask = mask.cuda()
+        label = label.cuda()
+        predictions = torch.log_softmax(model(inp, mask), dim=-1)
+        real_batch = label.shape[0]
 
         epsilon = 1e-8
         for i in range(real_batch):
