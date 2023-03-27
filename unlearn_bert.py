@@ -39,11 +39,6 @@ def main():
                            nb_class=nb_class).cuda()
 
     y = th.LongTensor((y_train + y_val + y_test).argmax(axis=1))
-    curr = 0
-    label = {}
-    for split, num in zip(['retain', 'forget', 'val', 'test'], [nb_retain, nb_forget, nb_val, nb_test]):
-        label[split] = y[curr: curr + num]
-        curr += num
 
     corpus_file = './data/corpus/'+dataset+'_shuffle.txt'
     with open(corpus_file, 'r') as f:
@@ -57,15 +52,21 @@ def main():
         return input.input_ids, input.attention_mask
 
     input_ids, attention_mask = {}, {}
+    label = {}
 
     input_ids_, attention_mask_ = encode_input(text, model.tokenizer)
 
     # create train/test/val datasets and dataloaders
     curr = 0
-    for split, num in zip(['retain', 'forget', 'val', 'test'], [nb_retain, nb_forget, nb_val, nb_test]):
+    for split, num in zip(['retain', 'forget', 'val'], [nb_retain, nb_forget, nb_val]):
         input_ids[split] = input_ids_[curr: curr + num]
         attention_mask[split] = attention_mask_[curr: curr + num]
+        label[split] = y[curr: curr + num]
         curr += num
+
+    label['test'] = y[-nb_test:]
+    input_ids['test'] = input_ids_[-nb_test:]
+    attention_mask['test'] = attention_mask_[-nb_test:]
 
     datasets = {}
     loader = {}
