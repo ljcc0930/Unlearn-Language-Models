@@ -11,7 +11,8 @@ metrics = 'RA,UA,TA'.split(',')
 ext_args = {
     "retrain": " --unlearn_epochs 60",
     "IU": " --alpha 5",
-    "FF": " --alpha 5e-8",
+    "FF": " --alpha 2e-7 --rerun",
+    "GA": " --unlearn_lr 5e-6 --rerun",
 }
 
 # Feb. 11, 2023 version
@@ -77,4 +78,4 @@ def gen_commands_unlearn():
 
 if __name__ == "__main__":
     commands = gen_commands_unlearn()
-    run_commands([0], commands, "fintune", call=False, shuffle=False, delay=1)
+    run_commands([0], commands, "unlearn", call=True, shuffle=False, delay=1)
