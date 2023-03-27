@@ -34,6 +34,7 @@ def main():
     nb_forget = int(nb_train * forget_ratio)
     nb_retain = nb_train - nb_forget
     nb_class = y_train.shape[1]
+    args.num_classes = nb_class
 
     model = BertClassifier(pretrained_model=bert_init,
                            nb_class=nb_class).cuda()
