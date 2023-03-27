@@ -14,3 +14,21 @@ pip install dgl -f https://data.dgl.ai/wheels/cu118/repo.html
 pip install dglgo -f https://data.dgl.ai/wheels-test/repo.html
 pip install pytorch-ignite transformers scikit-learn nltk
 ```
+
+## Pre-process data
+
+```bash
+bash run_build.sh
+```
+
+## Finetune model
+
+```bash
+bash run_finetune.sh
+```
+
+## Unlearning
+
+```bash
+bash run_unlearn.sh
+```
