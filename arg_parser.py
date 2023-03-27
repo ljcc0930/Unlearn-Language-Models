@@ -19,4 +19,5 @@ def parse_args():
                         help='number of total epochs for unlearn to run')
     parser.add_argument('--print_freq', default=20,
                         type=int, help='print frequency')
+    parser.add_argument('--rerun', action="store_true")
     return parser.parse_args()

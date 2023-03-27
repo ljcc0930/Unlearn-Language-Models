@@ -12,23 +12,23 @@ def validate(val_loader, model, criterion, args):
     # switch to evaluate mode
     model.eval()
 
-    for i, (input, target) in enumerate(val_loader):
-
-        input = input.cuda()
-        target = target.cuda()
+    for i, (inp, mask, label) in enumerate(val_loader):
+        inp = inp.cuda()
+        mask = mask.cuda()
+        label = label.cuda()
 
         # compute output
         with torch.no_grad():
-            output = model(input)
-            loss = criterion(output, target)
+            output = model(inp, mask)
+            loss = criterion(output, label)
 
         output = output.float()
         loss = loss.float()
 
         # measure accuracy and record loss
-        prec1 = utils.accuracy(output.data, target)[0]
-        losses.update(loss.item(), input.size(0))
-        top1.update(prec1.item(), input.size(0))
+        prec1 = utils.accuracy(output.data, label)[0]
+        losses.update(loss.item(), inp.size(0))
+        top1.update(prec1.item(), inp.size(0))
 
         if i % args.print_freq == 0:
             print('Test: [{0}/{1}]\t'
