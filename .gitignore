@@ -3,6 +3,7 @@ data
 unlearn_results
 commands
 grid_results
+*.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
