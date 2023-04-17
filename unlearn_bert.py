@@ -11,6 +11,7 @@ import arg_parser
 
 from model import BertClassifier
 import utils
+import evaluation
 
 
 def main():
@@ -110,6 +111,24 @@ def main():
     if "RA" not in evaluation_result:
         evaluation_result["RA"] = trainer.validate(
             loader['retain'], model, criterion, args)
+    
+    if 'MIA' not in evaluation_result:
+        test_len = min(len(datasets['test']), len(datasets['retain']))
+
+        shadow_train = Data.Subset(
+            datasets['retain'], list(range(test_len)))
+        shadow_test = Data.Subset(
+            datasets['test'], list(range(test_len)))
+        shadow_train_loader = Data.DataLoader(
+            shadow_train, batch_size=args.batch_size, shuffle=False)
+        shadow_test_loader = Data.DataLoader(
+            shadow_test, batch_size=args.batch_size, shuffle=False)
+
+        evaluation_result['MIA'] = evaluation.SVC_MIA(
+            shadow_train=shadow_train_loader, shadow_test=shadow_test_loader,
+            target_train=None, target_test=loader['forget'],
+            model=model)
+        unlearn.save_unlearn_checkpoint(model, evaluation_result, args)
 
     unlearn.save_unlearn_checkpoint(model, evaluation_result, args)
 
