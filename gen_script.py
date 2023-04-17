@@ -4,15 +4,15 @@ import random
 import time
 
 datasets = '20ng,R8,R52,ohsumed,mr'.split(',')
-models = 'bert-base-uncased'.split(',')
-unlearns = 'raw,retrain,FT,GA,FF,IU'.split(',')
+models = 'bert-base-uncased,roberta-base'.split(',')
+unlearns = 'raw,retrain,FF,GA,IU,FT'.split(',')
 metrics = 'RA,UA,TA'.split(',')
 
 ext_args = {
     "retrain": " --unlearn_epochs 60",
     "IU": " --alpha 5",
-    "FF": " --alpha 2e-7 --rerun",
-    "GA": " --unlearn_lr 5e-6 --rerun",
+    "FF": " --alpha 2e-7",
+    "GA": " --unlearn_lr 5e-6",
 }
 
 # Feb. 11, 2023 version
@@ -65,17 +65,36 @@ def gen_commands_finetune():
             commands.append(command)
     return commands
 
-def gen_commands_unlearn():
+def gen_commands_unlearn(rerun=False):
     commands = []
     for dataset in datasets:
         for model in models:
             for unlearn in unlearns:
                 command = f"python unlearn_bert.py --dataset {dataset} --unlearn-method {unlearn} --bert_init {model}"
+                if rerun:
+                    command += " --rerun"
+                if unlearn in ext_args:
+                    command += ext_args[unlearn]
+                commands.append(command)
+    return commands
+
+def gen_grid_search():
+    commands = []
+    alphas = list(range(20))
+
+    for dataset in datasets:
+        for model in models:
+            for alpha in alphas:
+                unlearn = "IU"
+                command = f"python unlearn_bert.py --dataset {dataset} --unlearn-method {unlearn} --bert_init {model} --alpha {alpha}"
+                command += f" --save-dir grid_results/{dataset}/{model}/{unlearn}/alpha_{alpha}"
                 if unlearn in ext_args:
                     command += ext_args[unlearn]
                 commands.append(command)
     return commands
 
 if __name__ == "__main__":
-    commands = gen_commands_unlearn()
-    run_commands([0], commands, "unlearn", call=True, shuffle=False, delay=1)
+    # commands = gen_commands_unlearn(False)
+    # run_commands([0,1,2], commands, "unlearn", call=False, shuffle=False, delay=1)
+    commands = gen_grid_search()
+    run_commands([0,1,2,3] * 3, commands, "grid", call=True, shuffle=False, delay=1)
