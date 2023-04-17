@@ -78,9 +78,9 @@ def gen_commands_unlearn(rerun=False):
                 commands.append(command)
     return commands
 
-def gen_grid_search():
+def gen_grid_search_IU():
     commands = []
-    alphas = list(range(20))
+    alphas = list(range(1, 21))
 
     for dataset in datasets:
         for model in models:
@@ -93,8 +93,23 @@ def gen_grid_search():
                 commands.append(command)
     return commands
 
+def gen_grid_search_FF():
+    commands = []
+    alphas = [i * 1e-8 for i in range(1, 21)]
+
+    for dataset in datasets:
+        for model in models:
+            for alpha in alphas:
+                unlearn = "FF"
+                command = f"python unlearn_bert.py --dataset {dataset} --unlearn-method {unlearn} --bert_init {model} --alpha {alpha}"
+                command += f" --save-dir grid_results/{dataset}/{model}/{unlearn}/alpha_{alpha}"
+                if unlearn in ext_args:
+                    command += ext_args[unlearn]
+                commands.append(command)
+    return commands
+
 if __name__ == "__main__":
     # commands = gen_commands_unlearn(False)
     # run_commands([0,1,2], commands, "unlearn", call=False, shuffle=False, delay=1)
-    commands = gen_grid_search()
-    run_commands([0,1,2,3] * 3, commands, "grid", call=True, shuffle=False, delay=1)
+    commands = gen_grid_search_FF()
+    run_commands([0,1,2,3,4,5] * 2, commands, "grid", call=True, shuffle=False, delay=1)

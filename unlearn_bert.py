@@ -105,12 +105,15 @@ def main():
     if "TA" not in evaluation_result:
         evaluation_result["TA"] = trainer.validate(
             loader['test'], model, criterion, args)
+        unlearn.save_unlearn_checkpoint(model, evaluation_result, args)
     if "UA" not in evaluation_result:
         evaluation_result["UA"] = 1 - \
             trainer.validate(loader['forget'], model, criterion, args)
+        unlearn.save_unlearn_checkpoint(model, evaluation_result, args)
     if "RA" not in evaluation_result:
         evaluation_result["RA"] = trainer.validate(
             loader['retain'], model, criterion, args)
+        unlearn.save_unlearn_checkpoint(model, evaluation_result, args)
     
     if 'MIA' not in evaluation_result:
         test_len = min(len(datasets['test']), len(datasets['retain']))
