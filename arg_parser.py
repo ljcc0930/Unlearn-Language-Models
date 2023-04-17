@@ -26,4 +26,5 @@ def parse_args():
                         type=int, help='print frequency')
     parser.add_argument('--rerun', action="store_true")
     parser.add_argument('--alpha', type=float, default=5e-7)
+    parser.add_argument('--save-dir', type=str, default=None)
     return parser.parse_args()
