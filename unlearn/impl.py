@@ -17,7 +17,10 @@ import os
 
 def save_unlearn_checkpoint(model, evaluation_result, args):
     print("New checkpoint")
-    dir = os.path.join('unlearn_results', args.dataset, args.bert_init, args.unlearn_method)
+    if args.save_dir is None:
+        dir = os.path.join('unlearn_results', args.dataset, args.bert_init, args.unlearn_method)
+    else:
+        dir = args.save_dir
     os.makedirs(dir, exist_ok=True)
     torch.save(
     {
@@ -34,7 +37,10 @@ def save_unlearn_checkpoint(model, evaluation_result, args):
 
 
 def load_unlearn_checkpoint(model, args):
-    dir = os.path.join('unlearn_results', args.dataset, args.bert_init, args.unlearn_method)
+    if args.save_dir is None:
+        dir = os.path.join('unlearn_results', args.dataset, args.bert_init, args.unlearn_method)
+    else:
+        dir = args.save_dir
     checkpoint_path = os.path.join(dir, "save.pkl")
     if not os.path.exists(checkpoint_path):
         return None
