@@ -1,4 +1,4 @@
-# Classwise Unlearn for Language Models
+# Class-wise Unlearning for Language Classification Tasks
 Course project for CSE 842.
 
 ## Requirements
