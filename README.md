@@ -1,4 +1,4 @@
-# CSE-842-proj
+# Classwise Unlearn for Language Models
 Course project for CSE 842.
 
 ## Requirements
